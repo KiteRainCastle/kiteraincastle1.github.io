@@ -11,15 +11,16 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://kiteraincastle1.github.io/">
 <meta property="og:title" content="성연우 — 웹 풀스택 개발자">
 <meta property="og:description" content="11년 8개월 경력의 웹 풀스택 개발자 성연우의 포트폴리오. KAIST, 경희대학교, 행정안전부 등 공공·교육기관 시스템 설계 및 개발 경험.">
-<meta property="og:image" content="og-image.png">
+<meta property="og:image" content="https://kiteraincastle1.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="성연우 — 웹 풀스택 개발자">
 <meta name="twitter:description" content="11년 8개월 경력의 웹 풀스택 개발자 성연우의 포트폴리오.">
-<meta name="twitter:image" content="og-image.png">
+<meta name="twitter:image" content="https://kiteraincastle1.github.io/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,8 +170,7 @@
 
   .tab-viewport{ flex:1; min-height:0; overflow-y:auto; padding:44px 40px 80px; }
   .tab-pane{ display:none; max-width:900px; }
-  .tab-pane.active{ display:block; animation:paneIn .5s cubic-bezier(.2,.7,.2,1); }
-  @keyframes paneIn{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0); } }
+  .tab-pane.active{ display:block; }
 
   .pane-title{ font-weight:800; font-size:1.7rem; margin:0 0 8px; letter-spacing:-0.01em; }
   .pane-sub{ font-size:0.9rem; color:var(--muted-2); margin:0 0 34px; }
@@ -187,6 +187,23 @@
   .about-card p{ margin:0 0 16px; color:#DDE2ED; font-size:1.02rem; }
   .about-card p:last-child{ margin-bottom:0; }
   .about-card strong{ background:var(--grad-brand); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:700; }
+  .ai-highlight{ border-color:rgba(52,211,153,0.35); animation:neonPulse 3.2s ease-in-out infinite; }
+  @keyframes neonPulse{
+    0%,100%{ box-shadow:0 0 0px rgba(52,211,153,0); border-color:rgba(52,211,153,0.28); }
+    50%{ box-shadow:0 0 22px rgba(52,211,153,0.22); border-color:rgba(52,211,153,0.55); }
+  }
+
+  .strength-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:680px){ .strength-grid{grid-template-columns:1fr;} }
+  .strength-card{
+    background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:22px; position:relative; overflow:hidden;
+    transition:transform .18s ease, border-color .18s ease;
+  }
+  .strength-card:hover{ border-color:var(--border-strong); }
+  .strength-icon{ display:inline-block; color:var(--cyan); font-size:0.8rem; margin-bottom:10px; }
+  .strength-card h4{ margin:0 0 6px; font-size:1rem; font-weight:700; }
+  .strength-card p{ margin:0; font-size:0.85rem; color:var(--muted); }
 
   /* ---------- CAREER TIMELINE ---------- */
   .timeline{ position:relative; padding-left:30px; }
@@ -242,6 +259,87 @@
     ::view-transition-old(root){ animation-duration:.32s; animation-timing-function:ease-out; }
     ::view-transition-new(root){ animation-duration:.32s; animation-timing-function:ease-out; }
   }
+
+  /* ---------- 1. Gradient Shift 텍스트 ---------- */
+  .grad-text{
+    background:linear-gradient(90deg, #8B5CF6, #3B82F6, #22D3EE, #EC4899, #8B5CF6);
+    background-size:300% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:gradFlow 7s ease infinite;
+  }
+  @keyframes gradFlow{ 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+
+  /* ---------- 2. Typewriter + Cursor Glow ---------- */
+  .typewriter.typing::after, .typewriter.tw-idle::after{
+    content:''; display:inline-block; width:2px; height:0.95em; margin-left:3px; vertical-align:-0.12em;
+    background:#22D3EE; box-shadow:0 0 8px #22D3EE, 0 0 16px rgba(34,211,238,0.6);
+    animation:caretBlink .8s steps(1) infinite;
+  }
+  @keyframes caretBlink{ 50%{opacity:0;} }
+
+  /* ---------- 3. Glitch Effect ---------- */
+  .glitch-text{ position:relative; display:inline-block; }
+  .glitch-host:hover .glitch-text{ animation:glitchShake .32s steps(2) 2; }
+  .glitch-host:hover .glitch-text::before,
+  .glitch-host:hover .glitch-text::after{
+    content:attr(data-text); position:absolute; left:0; top:0; width:100%; overflow:hidden;
+  }
+  .glitch-host:hover .glitch-text::before{ color:#EC4899; clip-path:inset(0 0 55% 0); animation:glitchTop .32s steps(2) 2; }
+  .glitch-host:hover .glitch-text::after{ color:#22D3EE; clip-path:inset(55% 0 0 0); animation:glitchBottom .32s steps(2) 2; }
+  @keyframes glitchShake{ 0%{transform:translate(0,0);} 25%{transform:translate(-2px,1px);} 50%{transform:translate(2px,-1px);} 75%{transform:translate(-1px,-1px);} 100%{transform:translate(0,0);} }
+  @keyframes glitchTop{ 0%{transform:translate(0,0);} 50%{transform:translate(-3px,-1px);} 100%{transform:translate(0,0);} }
+  @keyframes glitchBottom{ 0%{transform:translate(0,0);} 50%{transform:translate(3px,1px);} 100%{transform:translate(0,0);} }
+
+  /* ---------- 4. Shimmer / Metallic Shine ---------- */
+  .shimmer-host{ position:relative; }
+  .shimmer-host::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.16) 50%, transparent 60%);
+    background-size:250% 250%; background-position:150% 150%;
+    transition:background-position 0s;
+  }
+  .shimmer-host:hover::after{ background-position:-50% -50%; transition:background-position .9s ease; }
+
+  /* ---------- 5. Perspective Tilt (마우스 추종 3D 기울임) ---------- */
+  .tilt-host{ transform-style:preserve-3d; will-change:transform; transition:transform .15s ease-out; }
+
+  /* ---------- 6. Ripple Effect ---------- */
+  .ripple-host, .tab-btn, .btn, .social-btn{ position:relative; overflow:hidden; }
+  .ripple-ink{
+    position:absolute; border-radius:50%; background:rgba(255,255,255,0.35);
+    transform:scale(0); animation:rippleOut .6s ease-out forwards; pointer-events:none;
+  }
+  @keyframes rippleOut{ to{ transform:scale(1); opacity:0; } }
+
+  /* ---------- 7. Blur to Sharp pane 등장 ---------- */
+  .tab-pane.active{ animation:paneIn .55s cubic-bezier(.2,.7,.2,1); }
+  @keyframes paneIn{ from{ opacity:0; transform:translateY(16px); filter:blur(6px); } to{ opacity:1; transform:translateY(0); filter:blur(0); } }
+
+  /* ---------- 8. Elastic Bounce (아바타) ---------- */
+  .avatar-wrap{ animation:elasticIn .8s cubic-bezier(.34,1.56,.64,1) .1s both; }
+  @keyframes elasticIn{ 0%{ transform:scale(0.3); opacity:0; } 60%{ transform:scale(1.12); opacity:1; } 100%{ transform:scale(1); } }
+
+  /* ---------- 9. Vaporwave Scanline (AI 터미널 바) ---------- */
+  .ai-termbar{ position:relative; overflow:hidden; }
+  .ai-termbar::after{
+    content:''; position:absolute; left:0; right:0; height:2px; top:-10%;
+    background:linear-gradient(90deg, transparent, rgba(94,234,212,0.8), transparent);
+    animation:scanline 3.4s linear infinite;
+  }
+  @keyframes scanline{ 0%{ top:-10%; } 100%{ top:110%; } }
+
+  /* ---------- 10. Morphing Blobs (배경 블롭 유기적 형태 변화) ---------- */
+  .blob{ animation-name:drift1, morph; animation-duration:26s, 9s; animation-iteration-count:infinite, infinite; animation-timing-function:ease-in-out, ease-in-out; }
+  .blob-2{ animation-duration:32s, 11s; }
+  .blob-3{ animation-duration:30s, 8s; }
+  .blob-4{ animation-duration:22s, 10s; }
+  @keyframes morph{
+    0%,100%{ border-radius:50%; }
+    25%{ border-radius:46% 54% 60% 40% / 55% 45% 55% 45%; }
+    50%{ border-radius:60% 40% 45% 55% / 40% 60% 40% 60%; }
+    75%{ border-radius:40% 60% 50% 50% / 60% 40% 60% 40%; }
+  }
+
 
   /* ---------- CURSOR SPOTLIGHT ---------- */
   .spotlight-host{ position:relative; }
@@ -372,22 +470,17 @@
       <div class="avatar-inner">SY</div>
     </div>
     <h1 class="side-name">성연우</h1>
-    <p class="side-title">웹 풀스택 개발자</p>
+    <p class="side-title typewriter" data-text="웹 풀스택 개발자"></p>
     <p class="side-meta">11년 8개월차 · 대한민국</p>
     <p class="side-bio">공공기관과 대학 시스템을 설계하고 개발해온 풀스택 개발자입니다.</p>
     <div class="side-socials">
       <a class="social-btn" href="mailto:kiteraincastle1@daum.net" aria-label="이메일">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
       </a>
-      <a class="social-btn" href="https://github.com/KiteRainCastle" target="_blank" rel="noopener" aria-label="GitHub">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 5.02 3.26 9.28 7.78 10.78.57.1.78-.25.78-.55v-2.1c-3.17.69-3.83-1.36-3.83-1.36-.52-1.3-1.27-1.65-1.27-1.65-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.53-.29-5.19-1.27-5.19-5.63 0-1.24.44-2.26 1.17-3.05-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.14 1.17a10.9 10.9 0 0 1 5.72 0c2.18-1.48 3.14-1.17 3.14-1.17.62 1.57.23 2.73.11 3.02.73.79 1.17 1.81 1.17 3.05 0 4.37-2.67 5.34-5.21 5.62.41.36.77 1.06.77 2.14v3.17c0 .3.2.66.79.55 4.51-1.51 7.77-5.76 7.77-10.78C23.02 5.24 18.27.5 12 .5Z"/></svg>
-      </a>
     </div>
     <div class="side-stats">
       <div class="mini-stat"><b>11년 8개월</b><span>총 경력</span></div>
       <div class="mini-stat"><b class="countup">15건</b><span>KOSA 프로젝트</span></div>
-      <div class="mini-stat"><b class="countup">4곳</b><span>근무 조직</span></div>
-      <div class="mini-stat"><b>정보처리기사</b><span>국가기술자격</span></div>
     </div>
   </aside>
 
@@ -404,14 +497,38 @@
 
       <!-- 소개 -->
       <section class="tab-pane active" id="pane-profile">
-        <h2 class="pane-title">소개</h2>
+        <h2 class="pane-title grad-text">소개</h2>
         <p class="pane-sub">2014년부터 KAIST, 경희대학교, 행정안전부, 안전보건공단 시스템을 기획, 설계, 개발, 운영까지 맡아왔습니다.</p>
-        <div class="about-card reveal reveal-up spotlight-host">
+        <div class="about-card reveal reveal-up spotlight-host tilt-host">
           <p>Java와 Oracle, 전자정부표준프레임워크로 경력을 시작해서 대학교·정부기관·공공기관 시스템을 설계하고 구축해왔습니다. 요구사항 분석부터 설계, 개발, 운영 유지보수까지 한 번씩은 다 해봤고, 몇몇 프로젝트에서는 PL로 일정 관리와 보고를 직접 맡았습니다.</p>
-          <p>최근에는 경운대학교 프로젝트 준비를 통해 <strong>Vue 3, Quasar, TypeScript</strong> 같은 최신 프론트엔드 스택으로 영역을 넓히고 있고, 현재는 Vue3 기반 스킬 비중을 늘리는 중입니다. 오래된 시스템을 새 구조로 옮기는 일에 관심이 많습니다.</p>
+          <p>최근에는 경운대학교 프로젝트 준비를 통해 <strong>Vue 3, Quasar, TypeScript</strong> 같은 최신 프론트엔드 스택으로 영역을 넓히고 있고, 현재는 Vue3 기반 스킬 비중을 늘리는 중입니다. 오래된 시스템을 새 구조로 옮기는 일에 관심이 많고, 어떤 문제든 일단 적극적으로 부딪혀 보는 편입니다. 막히는 부분이 생기면 혼자 끌어안기보다 주변과 활발히 소통하면서 함께 풀어가는 방식으로 일합니다.</p>
         </div>
-        <div class="about-card reveal reveal-up spotlight-host">
-          <p>개인적으로는 Claude Code를 활용한 레거시 화면 자동 변환 프로젝트를 5개월째 진행하고 있습니다. 자세한 내용은 <strong>AI 프로젝트</strong> 탭에서 확인하실 수 있습니다.</p>
+        <div class="about-card reveal reveal-up spotlight-host tilt-host ai-highlight">
+          <p>개인적으로는 Claude Code를 활용한 레거시 화면 자동 변환 프로젝트를 5개월째 진행하고 있습니다. 세상이 빠르게 변하고 있고 AI가 개발의 중심이 될 거라고 느껴서, AI를 실무에 어떻게 접목할지 꾸준히 고민하고 관련 프로젝트에 적극적으로 뛰어들고 있습니다. 자세한 내용은 <strong>AI 프로젝트</strong> 탭에서 확인하실 수 있습니다.</p>
+        </div>
+
+        <div class="subhead"><h3>일하는 방식</h3></div>
+        <div class="strength-grid">
+          <div class="strength-card reveal reveal-up shimmer-host">
+            <span class="strength-icon">◆</span>
+            <h4>11년+ 실무 경험</h4>
+            <p>공공·교육기관 대형 시스템을 설계부터 운영까지 전 주기로 다뤄왔습니다.</p>
+          </div>
+          <div class="strength-card reveal reveal-up glitch-host">
+            <span class="strength-icon">◆</span>
+            <h4 class="glitch-text" data-text="AI 활용 개발">AI 활용 개발</h4>
+            <p>Claude Code로 실제 운영 가능한 결과물을 만드는 방법을 계속 실험합니다.</p>
+          </div>
+          <div class="strength-card reveal reveal-up ripple-host">
+            <span class="strength-icon">◆</span>
+            <h4>적극적인 커뮤니케이션</h4>
+            <p>막히면 바로 공유하고, 함께 논의하면서 빠르게 풀어가는 걸 선호합니다.</p>
+          </div>
+          <div class="strength-card reveal reveal-up tilt-host">
+            <span class="strength-icon">◆</span>
+            <h4>레거시 → 모던 전환</h4>
+            <p>오래된 시스템을 새 구조로 옮기는 일에 특히 관심이 많습니다.</p>
+          </div>
         </div>
       </section>
 
@@ -898,6 +1015,53 @@
     document.querySelectorAll('.sidebar .countup').forEach(el => setTimeout(() => animateCountUp(el), 450));
   });
   window.addEventListener('resize', () => moveIndicator(document.querySelector('.tab-btn.active')));
+
+  // 타이프라이터 + 커서 글로우
+  function typeWriter(el){
+    if(!el || reduceMotion){ if(el) el.textContent = el.dataset.text || ''; return; }
+    const text = el.dataset.text || '';
+    el.textContent = '';
+    el.classList.add('typing');
+    let i = 0;
+    (function step(){
+      el.textContent = text.slice(0, i);
+      i++;
+      if(i <= text.length){ setTimeout(step, 55); }
+      else { el.classList.remove('typing'); el.classList.add('tw-idle'); }
+    })();
+  }
+  window.addEventListener('load', () => {
+    setTimeout(() => typeWriter(document.querySelector('.side-title.typewriter')), 700);
+  });
+
+  // 리플 클릭 효과 (탭/버튼)
+  document.querySelectorAll('.ripple-host, .tab-btn, .btn, .social-btn').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if(reduceMotion) return;
+      const r = el.getBoundingClientRect();
+      const size = Math.max(r.width, r.height) * 1.6;
+      const ink = document.createElement('span');
+      ink.className = 'ripple-ink';
+      ink.style.width = ink.style.height = size + 'px';
+      ink.style.left = (e.clientX - r.left - size / 2) + 'px';
+      ink.style.top = (e.clientY - r.top - size / 2) + 'px';
+      el.appendChild(ink);
+      ink.addEventListener('animationend', () => ink.remove());
+    });
+  });
+
+  // 퍼스펙티브 틸트 (마우스 추종 3D 기울임)
+  if(window.matchMedia('(hover: hover)').matches && !reduceMotion){
+    document.querySelectorAll('.tilt-host').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transform = `perspective(700px) rotateY(${px * 6}deg) rotateX(${-py * 6}deg)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = 'perspective(700px) rotateY(0) rotateX(0)'; });
+    });
+  }
 </script>
 
 </body>
