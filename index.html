@@ -75,8 +75,9 @@
     --r-sm:2px; --r-md:3px; --r-lg:5px; --r-xl:6px;
 
     /* 모션 */
-    --dur-1:.14s; --dur-2:.24s; --dur-3:.5s;
+    --dur-1:.14s; --dur-2:.24s; --dur-3:.5s; --dur-4:.6s;
     --ease-out:cubic-bezier(.2,.7,.2,1);
+    --ease-spring:cubic-bezier(.16,1,.3,1);
 
     /* z-index 스케일 */
     --z-bg:0; --z-base:1; --z-sticky:20; --z-overlay:40; --z-top:60;
@@ -101,7 +102,7 @@
   button{ font-family:inherit; }
 
   /* 모노 계열은 항상 자릿수 정렬 */
-  .id-path, .id-prompt, .side-meta, .meter-key, .meter-val, .tag, .chip,
+  .side-meta, .meter-key, .meter-val, .tag, .chip,
   .tl-period, .tl-dur, .sb-val, .project-num, .project-meta,
   .ledger-num, .ledger-when, .ai-termbar .lbl, .ai-kicker,
   .ai-stat b, .ai-phase .num, .ai-phase .when, .ai-principle .letter,
@@ -113,13 +114,6 @@
 
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
-  }
-
-  /* ---------- 그레인 오버레이 (평면감 제거) ---------- */
-  .grain{
-    position:fixed; inset:0; z-index:var(--z-bg); pointer-events:none;
-    opacity:0.03; mix-blend-mode:screen;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* ---------- 접근성 ---------- */
@@ -159,28 +153,16 @@
     border:1px solid var(--rule-strong); border-radius:var(--r-lg);
     background:var(--surface); overflow:hidden; margin-bottom:var(--sp-5);
   }
-  .id-bar{
-    display:flex; align-items:center; gap:10px;
-    padding:9px 12px; border-bottom:1px solid var(--rule);
-    background:rgba(255,255,255,0.03);
-  }
-  .id-dots{ display:flex; gap:5px; }
-  .id-dots i{ width:7px; height:7px; border-radius:50%; background:rgba(237,234,230,0.15); }
-  .id-path{ font-size:var(--fs-mono-label); color:var(--muted-2); letter-spacing:.02em; }
-  .id-body{ padding:18px 16px 16px; }
-  .id-head{ display:flex; align-items:center; gap:14px; margin-bottom:var(--sp-3); }
-  .id-lines{ min-width:0; }
-  .id-prompt{ font-size:var(--fs-mono-label); color:var(--muted-2); margin:0 0 3px; }
-  .id-sigil{ color:var(--copper); }
+  .id-body{ padding:var(--sp-5) var(--sp-4) var(--sp-4); text-align:center; }
 
-  .avatar-wrap{ width:54px; height:54px; flex-shrink:0; }
-  .avatar-inner{
-    width:54px; height:54px; display:flex; align-items:center; justify-content:center;
+  /* 사진은 사이드 프레임 폭의 70%, 가운데 정렬. aspect-ratio 로 항상 정사각 */
+  .avatar-wrap{ width:70%; aspect-ratio:1; margin:0 auto var(--sp-4); }
+  .avatar-img{
+    width:100%; height:100%; display:block; object-fit:cover;
     border-radius:var(--r-md); border:1px solid var(--rule-strong);
     background:rgba(237,234,230,0.05);
-    font-family:var(--mono); font-size:17px; font-weight:700; letter-spacing:0;
   }
-  .side-name{ font-size:1.5rem; font-weight:800; letter-spacing:-0.03em; margin:0; }
+  .side-name{ font-size:1.62rem; font-weight:800; letter-spacing:-0.03em; margin:0 0 4px; }
   .side-title{ font-size:var(--fs-sm); font-weight:600; color:var(--text); margin:0 0 var(--sp-1); }
   .side-meta{ font-size:var(--fs-mono-label); color:var(--muted-2); margin:0; }
   .side-bio{ font-size:var(--fs-sm); color:var(--muted); margin:0 0 var(--sp-5); max-width:34ch; }
@@ -202,10 +184,7 @@
   .meter-head{ display:flex; align-items:baseline; justify-content:space-between; gap:var(--sp-2); margin-bottom:6px; }
   .meter-key{ font-size:var(--fs-mono-label); color:var(--muted-2); letter-spacing:.1em; text-transform:uppercase; }
   .meter-val{ font-size:0.86rem; font-weight:700; color:var(--text); }
-  .meter-track{ height:3px; background:rgba(237,234,230,0.08); overflow:hidden; }
-  .meter-fill{ display:block; height:100%; width:var(--fill,0%); background:var(--copper); transition:width 1.1s var(--ease-out); }
-  .side-stats:not(.is-on) .meter-fill{ width:0; }
-  .meter-cap{ display:block; margin-top:5px; font-size:var(--fs-xs); color:var(--muted-2); }
+  .meter-cap{ display:block; margin-top:2px; font-size:var(--fs-xs); color:var(--muted-2); }
 
   /* ---------- 메인 패널 ---------- */
   .main{ flex:1; min-width:0; height:100dvh; display:flex; flex-direction:column; }
@@ -235,29 +214,62 @@
 
   .tab-viewport{ flex:1; min-height:0; overflow-y:auto; padding:var(--sp-7) var(--sp-7) var(--sp-8); }
   .tab-pane{ display:none; max-width:880px; }
-  .tab-pane.active{ display:block; animation:paneIn .34s var(--ease-out); }
-  @keyframes paneIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+  .tab-pane.active{ display:block; animation:paneIn .42s var(--ease-spring); }
+  @keyframes paneIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
 
   .pane-title{ font-weight:800; font-size:var(--fs-h1); margin:0 0 var(--sp-2); letter-spacing:-0.035em; }
+  .pane-title .w{
+    display:inline-block; white-space:pre;
+    opacity:0; transform:translateY(.42em); filter:blur(5px);
+    animation:charIn .58s var(--ease-spring) forwards;
+    animation-delay:calc(var(--i, 0) * 42ms);
+  }
+  @keyframes charIn{ to{ opacity:1; transform:none; filter:blur(0); } }
+
   .pane-sub{
+    position:relative;
     font-size:var(--fs-sm); color:var(--muted); margin:0 0 var(--sp-7);
-    padding-bottom:var(--sp-5); border-bottom:1px solid var(--rule-strong);
+    padding-bottom:var(--sp-5);
+    opacity:0; animation:subIn .55s var(--ease-spring) .16s forwards;
+  }
+  @keyframes subIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  /* 괘선은 따로 좌→우로 그어짐 */
+  .pane-sub::after, .subhead::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background:var(--rule-strong);
+    transform:scaleX(0); transform-origin:left;
+    animation:ruleIn .85s var(--ease-spring) .24s forwards;
   }
 
   /* 섹션 라벨 — "/ 제목" + 우측 캡션, 아래 괘선 */
   .subhead{
+    position:relative;
     display:flex; align-items:baseline; justify-content:space-between; gap:var(--sp-4);
     flex-wrap:wrap; margin:var(--sp-8) 0 var(--sp-5);
-    padding-bottom:var(--sp-3); border-bottom:1px solid var(--rule-strong);
+    padding-bottom:var(--sp-3);
   }
+  @keyframes ruleIn{ to{ transform:scaleX(1); } }
   .subhead:first-of-type{ margin-top:0; }
   .subhead h3{ font-size:var(--fs-sm); font-weight:700; letter-spacing:.06em; color:var(--copper-text); margin:0; }
   .subhead h3::before{ content:'/ '; font-family:var(--mono); color:var(--copper); }
   .subhead span{ font-size:var(--fs-xs); color:var(--muted-2); }
 
   /* ---------- 스크롤 리빌 ---------- */
-  .reveal{ opacity:0; transform:translateY(10px); transition:opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out); }
-  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+  .reveal{
+    opacity:0; transform:translateY(14px); filter:blur(6px);
+    transition:opacity var(--dur-4) var(--ease-spring),
+               transform var(--dur-4) var(--ease-spring),
+               filter var(--dur-4) var(--ease-spring);
+  }
+  .reveal.is-visible{ opacity:1; transform:none; filter:blur(0); }
+
+  /* 블록이 올라온 뒤 그 안의 문단·라벨이 한 번 더 순서대로 (--i 는 JS 가 부여) */
+  .reveal > *:not(.tl-dot){
+    opacity:0; transform:translateY(8px);
+    transition:opacity .46s var(--ease-spring), transform .46s var(--ease-spring);
+    transition-delay:calc(var(--i, 0) * 70ms + 70ms);
+  }
+  .reveal.is-visible > *:not(.tl-dot){ opacity:1; transform:none; }
 
   /* ---------- 소개 ---------- */
   .about-card{
@@ -343,12 +355,9 @@
   /* 기술 경험 비중 — 얇은 계측 바 */
   .skill-bars{ display:flex; flex-direction:column; gap:0; border-top:1px solid var(--rule); }
   .skill-bar{ padding:var(--sp-4) 0; border-bottom:1px solid var(--rule); }
-  .skill-bar .sb-head{ display:flex; justify-content:space-between; align-items:baseline; gap:var(--sp-4); font-size:var(--fs-sm); margin-bottom:var(--sp-2); }
+  .skill-bar .sb-head{ display:flex; justify-content:space-between; align-items:baseline; gap:var(--sp-4); font-size:var(--fs-sm); margin-bottom:0; }
   .skill-bar .sb-head span:first-child{ font-weight:600; color:var(--text); }
   .skill-bar .sb-val{ font-size:var(--fs-mono-label); color:var(--muted-2); white-space:nowrap; }
-  .sb-track{ position:relative; height:3px; border-radius:0; background:rgba(237,234,230,0.08); overflow:hidden; }
-  .sb-fill{ position:absolute; inset:0; border-radius:0; background:var(--copper); width:var(--fill, 0%); transition:width 1.1s var(--ease-out); }
-  .skill-bar:not(.is-visible) .sb-fill{ width:0 !important; }
 
   /* ---------- 프로젝트 ---------- */
   .project-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 var(--sp-6); }
@@ -518,9 +527,8 @@
       padding:var(--sp-5) var(--sp-5);
     }
     .id-card{ margin-bottom:var(--sp-4); }
-    .avatar-wrap, .avatar-inner{ width:46px; height:46px; }
-    .avatar-inner{ font-size:15px; }
-    .side-name{ font-size:1.3rem; }
+    .avatar-wrap{ width:min(70%, 168px); margin-bottom:var(--sp-3); }
+    .side-name{ font-size:1.4rem; }
     .side-bio{ display:block; margin:0 0 var(--sp-4); max-width:none; }
     .side-socials{ margin-bottom:var(--sp-4); }
     .side-stats{
@@ -543,25 +551,14 @@
 
 <a class="skip-link" href="#tabViewport">본문으로 건너뛰기</a>
 
-<div class="grain" aria-hidden="true"></div>
-
 <div class="shell">
 
   <aside class="sidebar" aria-label="프로필">
 
     <div class="id-card">
-      <div class="id-bar" aria-hidden="true">
-        <span class="id-dots"><i></i><i></i><i></i></span>
-        <span class="id-path">~/seongyeonwoo</span>
-      </div>
       <div class="id-body">
-        <div class="id-head">
-          <div class="avatar-wrap"><div class="avatar-inner">SY</div></div>
-          <div class="id-lines">
-            <p class="id-prompt" aria-hidden="true"><span class="id-sigil">$</span> whoami</p>
-            <h1 class="side-name">성연우</h1>
-          </div>
-        </div>
+        <div class="avatar-wrap"><img class="avatar-img" src="sample.jpeg" width="512" height="512" decoding="async" alt="성연우 프로필 사진"></div>
+        <h1 class="side-name">성연우</h1>
         <p class="side-title typewriter" data-text="웹 풀스택 개발자"></p>
         <p class="side-meta">11년 8개월차 · 대한민국</p>
       </div>
@@ -578,17 +575,14 @@
     <div class="side-stats">
       <div class="meter">
         <div class="meter-head"><span class="meter-key">exp</span><span class="meter-val">11년 8개월</span></div>
-        <div class="meter-track" aria-hidden="true"><span class="meter-fill" style="--fill:78%"></span></div>
         <span class="meter-cap">공공·교육기관 풀스택</span>
       </div>
       <div class="meter">
-        <div class="meter-head"><span class="meter-key">kosa</span><span class="meter-val countup">15건</span></div>
-        <div class="meter-track" aria-hidden="true"><span class="meter-fill" style="--fill:75%"></span></div>
+        <div class="meter-head"><span class="meter-key">kosa</span><span class="meter-val">15건</span></div>
         <span class="meter-cap">KOSA 등록 프로젝트</span>
       </div>
       <div class="meter">
         <div class="meter-head"><span class="meter-key">ai</span><span class="meter-val">5개월</span></div>
-        <div class="meter-track" aria-hidden="true"><span class="meter-fill" style="--fill:42%"></span></div>
         <span class="meter-cap">Claude Code 자동화</span>
       </div>
     </div>
@@ -657,7 +651,7 @@
                 <div class="tl-role">과장 · 솔루션 사업부</div>
                 <div class="tl-tags"><span class="tag">기획</span><span class="tag">설계</span><span class="tag">개발</span></div>
               </div>
-              <div class="tl-right"><div class="tl-period">2020.01 – 2025.11</div><div class="tl-dur">5년 10개월</div></div>
+              <div class="tl-right"><div class="tl-period">2020.01 – 재직중</div><div class="tl-dur">6년 8개월</div></div>
             </div>
           </div>
 
@@ -747,23 +741,18 @@
         <div class="skill-bars">
           <div class="skill-bar reveal">
             <div class="sb-head"><span>Java / Oracle</span><span class="sb-val">11년+</span></div>
-            <div class="sb-track"><div class="sb-fill" style="--fill:95%"></div></div>
           </div>
           <div class="skill-bar reveal">
             <div class="sb-head"><span>전자정부표준프레임워크</span><span class="sb-val">8년+</span></div>
-            <div class="sb-track"><div class="sb-fill" style="--fill:70%"></div></div>
           </div>
           <div class="skill-bar reveal">
             <div class="sb-head"><span>프론트엔드 (Vue3 · webSquare · Nexacro)</span><span class="sb-val">6년+</span></div>
-            <div class="sb-track"><div class="sb-fill" style="--fill:55%"></div></div>
           </div>
           <div class="skill-bar reveal">
             <div class="sb-head"><span>PL · 프로젝트 관리</span><span class="sb-val">5년+</span></div>
-            <div class="sb-track"><div class="sb-fill" style="--fill:45%"></div></div>
           </div>
           <div class="skill-bar reveal">
             <div class="sb-head"><span>AI 활용 개발 (Claude Code)</span><span class="sb-val">5개월+</span></div>
-            <div class="sb-track"><div class="sb-fill" style="--fill:15%"></div></div>
           </div>
         </div>
       </section>
@@ -935,12 +924,12 @@
             <p class="ai-desc">레거시 MyBuilder 화면을 Nexacro(XFDL)로 옮기는 작업을 Claude Code에게 반복시키기 위해 만든 개인 프로젝트입니다. 변환 규칙을 사람이 읽는 문서가 아니라 AI가 조회할 수 있는 YAML 카탈로그로 만들고, 변환·검증 절차를 Skill로 고정했습니다. 원본 코드에서 다섯 축(이벤트 핸들러·인라인 SQL·검증 분기·SELECT 명세·콤보 소스)을 스크립트로 뽑아 산출물과 1:1로 대조하는 방식으로, 사람이 놓치기 쉬운 누락을 기계가 세도록 만든 게 핵심입니다.</p>
 
             <div class="ai-stats">
-              <div class="ai-stat"><b class="countup">99개</b><span>화면 변환</span></div>
-              <div class="ai-stat"><b class="countup">92개</b><span>규칙 카탈로그</span></div>
-              <div class="ai-stat"><b class="countup">7개</b><span>Claude Skill</span></div>
-              <div class="ai-stat"><b class="countup">8개</b><span>검증 스크립트</span></div>
-              <div class="ai-stat"><b class="countup">67편</b><span>작업 저널</span></div>
-              <div class="ai-stat"><b class="countup">87%</b><span>재현 매칭률</span></div>
+              <div class="ai-stat"><b>99개</b><span>화면 변환</span></div>
+              <div class="ai-stat"><b>92개</b><span>규칙 카탈로그</span></div>
+              <div class="ai-stat"><b>7개</b><span>Claude Skill</span></div>
+              <div class="ai-stat"><b>8개</b><span>검증 스크립트</span></div>
+              <div class="ai-stat"><b>67편</b><span>작업 저널</span></div>
+              <div class="ai-stat"><b>87%</b><span>재현 매칭률</span></div>
             </div>
 
             <h4 class="ai-h4">5단계 진화 과정</h4>
@@ -1022,28 +1011,7 @@
 </div>
 
 <script>
-  // 숫자 카운트업 애니메이션 (앞자리 숫자만 0에서 목표값까지)
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function animateCountUp(el){
-    if(el.dataset.counted) return;
-    el.dataset.counted = '1';
-    const original = el.textContent.trim();
-    const match = original.match(/^(\d+)(.*)$/);
-    if(!match || reduceMotion) return;
-    const target = parseInt(match[1], 10);
-    const suffix = match[2];
-    const duration = 900;
-    const start = performance.now();
-    function tick(now){
-      // rAF 타임스탬프는 프레임 시작 시각이라 start 보다 이를 수 있음 → 음수 구간 차단
-      const p = Math.min(Math.max((now - start) / duration, 0), 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased) + suffix;
-      if(p < 1) requestAnimationFrame(tick);
-      else el.textContent = original;
-    }
-    requestAnimationFrame(tick);
-  }
 
   // 탭 전환
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1052,27 +1020,48 @@
   const tabbar = document.querySelector('.tabbar');
   const initedPanes = new Set();
 
+  // 패널 제목 글자 단위 등장. 탭이 display:none → block 이 될 때마다 CSS 애니메이션이 다시 돈다.
+  // 낭독기에는 원문을 aria-label 로 넘기고 조각은 숨긴다.
+  function splitTitle(el){
+    const text = el.textContent;
+    el.setAttribute('aria-label', text);
+    const frag = document.createDocumentFragment();
+    let i = 0;
+    for(const ch of Array.from(text)){
+      const sp = document.createElement('span');
+      sp.className = 'w';
+      sp.setAttribute('aria-hidden', 'true');
+      sp.style.setProperty('--i', i++);
+      sp.textContent = ch;
+      frag.appendChild(sp);
+    }
+    el.textContent = '';
+    el.appendChild(frag);
+  }
+  if(!reduceMotion) document.querySelectorAll('.pane-title').forEach(splitTitle);
+
   function initReveal(pane){
     if(initedPanes.has(pane)) return;
     initedPanes.add(pane);
     const els = pane.querySelectorAll('.reveal');
-    els.forEach((el, i) => { el.style.transitionDelay = (Math.min(i, 8) * 0.06) + 's'; });
-    if(!('IntersectionObserver' in window) || window.innerWidth <= 900){
-      els.forEach(el => {
-        el.classList.add('is-visible');
-        el.querySelectorAll('.countup').forEach(animateCountUp);
-      });
+    els.forEach((el, i) => {
+      el.style.transitionDelay = (Math.min(i, 8) * 0.08) + 's';
+      // 블록 안쪽도 순서대로 올라오게 — CSS 의 --i 계단식에 쓰임
+      Array.prototype.forEach.call(el.children, (c, j) => c.style.setProperty('--i', j));
+    });
+    if(!('IntersectionObserver' in window)){
+      els.forEach(el => el.classList.add('is-visible'));
       return;
     }
+    // 900px 이하에서는 문서 자체가 스크롤 컨테이너라, root 를 뷰포트로 두면 교차가 안 잡힌다
     const io = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if(entry.isIntersecting){
           entry.target.classList.add('is-visible');
-          entry.target.querySelectorAll('.countup').forEach(animateCountUp);
           io.unobserve(entry.target);
         }
       });
-    }, { root: viewport, threshold:0.1, rootMargin:'0px 0px -6% 0px' });
+    }, { root: window.innerWidth <= 900 ? null : viewport, threshold:0.1, rootMargin:'0px 0px -6% 0px' });
     els.forEach(el => io.observe(el));
   }
 
@@ -1156,8 +1145,6 @@
 
   window.addEventListener('load', () => {
     moveIndicator(document.querySelector('.tab-btn.active'));
-    document.querySelectorAll('.sidebar .countup').forEach(el => setTimeout(() => animateCountUp(el), 450));
-    document.querySelector('.side-stats').classList.add('is-on');
   });
   window.addEventListener('resize', () => moveIndicator(document.querySelector('.tab-btn.active')));
 
